@@ -90,6 +90,30 @@ namespace PurmMemory {
 		return this->_processId;
 	}
 
+	//reads from memory
+	bool MemoryManager::ReadMemory(DWORD address, void* buffer, int size) {
+		SIZE_T read;
+		if(!::ReadProcessMemory(this->_processHandle, (void*)address, buffer, size, &read)) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::ReadMemory(...): ReadProcessMemory returned false\r\n"));
+			#endif
+
+			return false;
+		}
+		else {
+			if(read != size) {
+				#if(_DEBUG)
+					::OutputDebugString(_T("MemoryManager::ReadMemory(...): readen size not as it should\r\n"));
+				#endif
+
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+	}
+
 	//gets a process by its Name; returns NULL if fails or not found
 	DWORD MemoryManager::GetProcessIdByName(TCHAR* processName) {
 		HANDLE snapHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);

@@ -21,6 +21,8 @@ namespace PurmMemory {
 		bool OpenProcess(TCHAR* processName, DWORD processRights = PROCESS_ALL_ACCESS);
 		bool CloseProcess();
 		bool UseOpenedProcessHandle(HANDLE processHandle);
+
+		bool ReadMemory(DWORD address, void* buffer, int size);
 	private:
 		HANDLE _processHandle;
 		DWORD _processId;
