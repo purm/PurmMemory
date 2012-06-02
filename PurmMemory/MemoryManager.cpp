@@ -47,6 +47,23 @@ namespace PurmMemory {
 		return this->OpenProcess(this->GetProcessIdByName(processName), processRights);
 	}
 
+	//sets the process handle
+	bool MemoryManager::UseOpenedProcessHandle(HANDLE processHandle) {
+		DWORD exitCode;
+		if(!::GetExitCodeProcess(processHandle, &exitCode)) {
+			if(::GetLastError() != STILL_ACTIVE) {
+				this->_processHandle = processHandle;
+				return true;
+			}
+		}
+
+		#if(_DEBUG)
+			::OutputDebugString(_T("MemoryManager::UseOpenedProcessHandle(...): Process of the Handle is not running\r\n"));
+		#endif
+
+		return false;
+	}
+
 	//closes the process handle
 	bool MemoryManager::CloseProcess() {
 		if(this->_processHandle != INVALID_HANDLE_VALUE) {
@@ -93,7 +110,7 @@ namespace PurmMemory {
 			if(Process32First(snapHandle, &currentEntry)) {
 				do {
 					if(!_tcscmp(processName, currentEntry.szExeFile)) {
-						CloseHandle(snapHandle);
+						::CloseHandle(snapHandle);
 						snapHandle = NULL;
 						#if(_DEBUG)
 							::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): Process ID was refactored successfully\r\n"));
@@ -108,7 +125,7 @@ namespace PurmMemory {
 				}
 			#endif
 
-			CloseHandle(snapHandle);
+			::CloseHandle(snapHandle);
 			snapHandle = NULL;
 			return NULL;
 		}
