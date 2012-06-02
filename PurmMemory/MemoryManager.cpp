@@ -40,6 +40,11 @@ namespace PurmMemory {
 		return true;
 	}
 
+	//opens a process by its name
+	bool MemoryManager::OpenProcess(TCHAR* processName, DWORD processRights) {
+		return this->OpenProcess(this->GetProcessIdByName(processName), processRights);
+	}
+
 	//closes the process handle
 	bool MemoryManager::CloseProcess() {
 		BOOL success = ::CloseHandle(this->_processHandle);
@@ -58,5 +63,46 @@ namespace PurmMemory {
 	//get/set accessors
 	DWORD MemoryManager::getProcessID() {
 		return this->_processId;
+	}
+
+	//gets a process by its HANDLE; returns NULL if fails or not found
+	DWORD MemoryManager::GetProcessIdByName(TCHAR* processName) {
+		HANDLE snapHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+		if(snapHandle == INVALID_HANDLE_VALUE) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): CreateToolhelp32Snapshot returned an INvalid HANDLE\r\n"));
+			#endif
+
+			return NULL;
+		} else {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): CreateToolhelp32Snapshot returned an VALID HANDLE\r\n"));
+			#endif
+
+			PROCESSENTRY32 currentEntry;
+			currentEntry.dwSize = sizeof(PROCESSENTRY32);
+
+			if(Process32First(snapHandle, &currentEntry)) {
+				do {
+					if(!_tcscmp(processName, currentEntry.szExeFile)) {
+						CloseHandle(snapHandle);
+						snapHandle = NULL;
+						#if(_DEBUG)
+							::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): Process ID was refactored successfully\r\n"));
+						#endif
+						return currentEntry.th32ProcessID;
+					}
+				} while(Process32Next(snapHandle, &currentEntry));
+			}
+			#if(_DEBUG)
+				else {
+					::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): Process32First returned null"));
+				}
+			#endif
+
+			CloseHandle(snapHandle);
+			snapHandle = NULL;
+			return NULL;
+		}
 	}
 }

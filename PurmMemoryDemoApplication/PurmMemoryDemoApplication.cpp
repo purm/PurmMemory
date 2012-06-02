@@ -16,6 +16,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	//TODO: example stuff
 
+	cout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
+
+
+
+
 	cin.get();
 	delete instance;
 
