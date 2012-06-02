@@ -4,8 +4,10 @@
 namespace PurmMemory {
 	MemoryManager::MemoryManager(void)
 	{
+		#if(_DEBUG)
+			::OutputDebugString(_T("MemoryManager::MemoryManager(): Object Instance created\r\n"));
+		#endif
 	}
-
 
 	MemoryManager::~MemoryManager(void)
 	{
@@ -47,17 +49,23 @@ namespace PurmMemory {
 
 	//closes the process handle
 	bool MemoryManager::CloseProcess() {
-		BOOL success = ::CloseHandle(this->_processHandle);
-		#if(_DEBUG)
-			if(!success) {
-				::OutputDebugString(_T("MemoryManager::CloseProcess(): CloseProcess returned false\r\n"));
-			} else {
-				::OutputDebugString(_T("MemoryManager::CloseProcess(): CloseProcess returned true\r\n"));
-			}
-		#endif
+		if(this->_processHandle != INVALID_HANDLE_VALUE) {
+			BOOL success = ::CloseHandle(this->_processHandle);
+			#if(_DEBUG)
+				if(!success) {
+					::OutputDebugString(_T("MemoryManager::CloseProcess(): CloseProcess returned false\r\n"));
+				} else {
+					::OutputDebugString(_T("MemoryManager::CloseProcess(): CloseProcess returned true\r\n"));
+				}
+			#endif
 
-		this->_processHandle = NULL;
-		return (success != 0);
+			this->_processHandle = NULL;
+			return (success != 0);
+		} else {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::CloseProcess(...): invalid HANDLE\r\n"));
+			#endif
+		}
 	}
 
 	//get/set accessors
@@ -65,7 +73,7 @@ namespace PurmMemory {
 		return this->_processId;
 	}
 
-	//gets a process by its HANDLE; returns NULL if fails or not found
+	//gets a process by its Name; returns NULL if fails or not found
 	DWORD MemoryManager::GetProcessIdByName(TCHAR* processName) {
 		HANDLE snapHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 		if(snapHandle == INVALID_HANDLE_VALUE) {
