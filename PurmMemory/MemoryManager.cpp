@@ -178,11 +178,40 @@ namespace PurmMemory {
 
 	//injects a dll into the process
 	bool MemoryManager::InjectDLl(TCHAR* path) {
-		//TODO: implement
+		size_t pathLenght = _tcsclen(path);
+		if(!pathLenght) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): pathLenght was 0"));
+			#endif
+
+			return false;
+		}
+
+		DWORD address = (DWORD)::VirtualAllocEx(this->_processHandle, NULL, pathLenght, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		if(!address) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Remote Memory Allocating failed"));
+			#endif
+
+			return false;
+		}
+
+		if(!this->WriteMemory(address, path, pathLenght)) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Memory Writing failed"));
+			#endif
+
+			return false;
+		}
+
+		::CreateRemoteThread(this->_processHandle, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibraryW, (void*)address, 0, NULL);
+
+		return true;
 	}
 
 	//injects opcodes into the proccess
 	bool MemoryManager::InjectCode(BYTE* opCode) {
 		//TODO: implement
+		return false;
 	}
 }
