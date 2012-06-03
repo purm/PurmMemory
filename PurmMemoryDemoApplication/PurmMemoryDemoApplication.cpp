@@ -21,6 +21,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	char* writeBuffer = "hallo!";
 	cout << "MemoryWrite " << ((instance->WriteMemory(0x0028F59E, writeBuffer, 6) == true) ? "succeded" : "failed") << endl;
 
+	//Writing Example 2
+	cout << "MemoryWrite " << ((instance->WriteMemory<int>(0x01EA0490, 1337) == true) ? "succeded" : "failed") << endl;
+
 	//Reading Example 1
 	char* readBuffer = new char[8];
 	cout << "MemoryRead " << ((instance->ReadMemory(0x0028F59E, readBuffer, 6) == true) ? "succeded" : "failed") << endl;

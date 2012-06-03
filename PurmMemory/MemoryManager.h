@@ -33,6 +33,9 @@ namespace PurmMemory {
 		}
 
 		bool WriteMemory(DWORD address, void* buffer, int size);
+		template<class T> bool WriteMemory(DWORD address, T buffer) {
+			return this->WriteMemory(address, &buffer, sizeof(T));
+		}
 
 	private:
 		HANDLE _processHandle;
