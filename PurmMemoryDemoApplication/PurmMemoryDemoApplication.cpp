@@ -17,12 +17,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Open Process
 	cout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
 
+	//Writing Example 1
+	char* writeBuffer = "hallo!";
+	cout << "MemoryWrite " << ((instance->WriteMemory(0x0028F59E, writeBuffer, 6) == true) ? "succeded" : "failed") << endl;
+
 	//Reading Example 1
-	char* buffer = new char[8];
-	cout << "MemoryRead " << ((instance->ReadMemory(0x0028F59E, buffer, 6) == true) ? "succeded" : "failed") << endl;
-	buffer[6] = '\0';
-	cout << "Buffer: " << buffer << endl;
-	delete[] buffer;
+	char* readBuffer = new char[8];
+	cout << "MemoryRead " << ((instance->ReadMemory(0x0028F59E, readBuffer, 6) == true) ? "succeded" : "failed") << endl;
+	readBuffer[6] = '\0';
+	cout << "Buffer: " << readBuffer << endl;
+	delete[] readBuffer;
 
 	//Reading Example 2
 	cout << "MemoryRead resulted: " << instance->ReadMemory<int>(0x01EA0490) << endl;
@@ -32,6 +36,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	cin.get();
 
-	return 0;
+	return 1;
 }
 

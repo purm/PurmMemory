@@ -32,6 +32,8 @@ namespace PurmMemory {
 			}
 		}
 
+		bool WriteMemory(DWORD address, void* buffer, int size);
+
 	private:
 		HANDLE _processHandle;
 		DWORD _processId;

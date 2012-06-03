@@ -101,16 +101,35 @@ namespace PurmMemory {
 			#endif
 
 			return false;
-		}
-		else {
+		} else {
 			if(read != size) {
 				#if(_DEBUG)
 					::OutputDebugString(_T("MemoryManager::ReadMemory(...): readen size not as it should\r\n"));
 				#endif
 
 				return false;
+			} else {
+				return true;
 			}
-			else {
+		}
+	}
+
+	bool MemoryManager::WriteMemory(DWORD address, void* buffer, int size) {
+		SIZE_T written;
+		if(!::WriteProcessMemory(this->_processHandle, (void*)address, buffer, size, &written)) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::WriteMemory(...): WriteProcessMemory returned false\r\n"));
+			#endif
+
+			return false;
+		} else {
+			if(written != size) {
+				#if(_DEBUG)
+					::OutputDebugString(_T("MemoryManager::WriteMemory(...): written size not as it should\r\n"));
+				#endif
+
+				return false;
+			} else {
 				return true;
 			}
 		}
