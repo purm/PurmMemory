@@ -116,7 +116,7 @@ namespace PurmMemory {
 
 	//gets a process by its Name; returns NULL if fails or not found
 	DWORD MemoryManager::GetProcessIdByName(TCHAR* processName) {
-		HANDLE snapHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+		HANDLE snapHandle = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 		if(snapHandle == INVALID_HANDLE_VALUE) {
 			#if(_DEBUG)
 				::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): CreateToolhelp32Snapshot returned an INvalid HANDLE\r\n"));

@@ -18,8 +18,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	cout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
 
-
-
+	char* buffer = new char[8];
+	cout << "MemoryRead " << ((instance->ReadMemory(0x0028F59E, buffer, 6) == true) ? "succeded" : "failed") << endl;
+	buffer[6] = '\0';
+	cout << "Buffer: " << buffer << endl;
 
 	cin.get();
 	delete instance;
