@@ -12,7 +12,7 @@ namespace PurmMemory {
 		~MemoryManager(void);
 
 		//enums
-		enum { _ERROR_OPENPROCESS_FAILED };
+		enum { _ERROR_OPENPROCESS_FAILED, _ERROR_READMEMORY_FAILED };
 
 		//get/set accessors
 		DWORD getProcessID();
@@ -28,6 +28,7 @@ namespace PurmMemory {
 			if(this->ReadMemory(address, &buffer, sizeof(T))) {
 				return buffer;
 			} else {
+				::SetLastError(MemoryManager::_ERROR_READMEMORY_FAILED);
 				return NULL;
 			}
 		}
