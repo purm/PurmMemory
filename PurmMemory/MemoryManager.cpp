@@ -137,7 +137,7 @@ namespace PurmMemory {
 						::CloseHandle(snapHandle);
 						snapHandle = NULL;
 						#if(_DEBUG)
-							::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): Process ID was refactored successfully\r\n"));
+							::OutputDebugString(_T("MemoryManager::GetProcessIdByName(...): Process ID was resolved successfully\r\n"));
 						#endif
 						return currentEntry.th32ProcessID;
 					}
