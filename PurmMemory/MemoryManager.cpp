@@ -181,7 +181,7 @@ namespace PurmMemory {
 		size_t pathLenght = _tcsclen(path);
 		if(!pathLenght) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): pathLenght was 0"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): pathLenght was 0"));
 			#endif
 
 			return false;
@@ -190,7 +190,7 @@ namespace PurmMemory {
 		HMODULE module = ::GetModuleHandle(_T("kernel32.dll"));
 		if(!module) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Kernel32 Module could not be found"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): Kernel32 Module could not be found"));
 			#endif
 
 			return false;
@@ -204,7 +204,7 @@ namespace PurmMemory {
 
 		if(!loadLibraryAddress) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): LoadLibrary Address could not be found"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): LoadLibrary Address could not be found"));
 			#endif
 
 			return false;
@@ -213,7 +213,7 @@ namespace PurmMemory {
 		void* address = this->AllocateMemory(pathLenght);
 		if(!address) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Remote Memory Allocating failed"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): Remote Memory Allocating failed"));
 			#endif
 
 			return false;
@@ -221,7 +221,7 @@ namespace PurmMemory {
 
 		if(!this->WriteMemory(address, path, pathLenght)) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Memory Writing failed"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): Memory Writing failed"));
 			#endif
 
 			this->FreeMemory(address, pathLenght);
@@ -235,7 +235,7 @@ namespace PurmMemory {
 
 		if(!threadHandle) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): CreateRemoteThread failed"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): CreateRemoteThread failed"));
 			#endif
 
 			this->FreeMemory(address, pathLenght);
@@ -245,7 +245,7 @@ namespace PurmMemory {
 
 		if(::WaitForSingleObject(threadHandle, INFINITE) == WAIT_FAILED) {
 			#if(_DEBUG)
-				::OutputDebugString(_T("MemoryManager::InjectDLl(...): WaitForSingleObject(...) -> WAIT_FAILED"));
+				::OutputDebugString(_T("MemoryManager::InjectDll(...): WaitForSingleObject(...) -> WAIT_FAILED"));
 			#endif
 
 			this->FreeMemory(address, pathLenght);

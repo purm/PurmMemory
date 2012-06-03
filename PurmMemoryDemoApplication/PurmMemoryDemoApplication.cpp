@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wcout << "MemoryManager created @ " << instance << endl;
 	
 	//Open Process
-	wcout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
+	wcout << "Process open " << ((instance->OpenProcess(_T("GitHub.exe")) == true) ? "succeded" : "failed") << endl;
 
 	//Writing Example 1
 	char* writeBuffer = "hallo!";
