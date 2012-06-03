@@ -175,4 +175,14 @@ namespace PurmMemory {
 			return NULL;
 		}
 	}
+
+	//injects a dll into the process
+	bool MemoryManager::InjectDLl(TCHAR* path) {
+		//TODO: implement
+	}
+
+	//injects opcodes into the proccess
+	bool MemoryManager::InjectCode(BYTE* opCode) {
+		//TODO: implement
+	}
 }

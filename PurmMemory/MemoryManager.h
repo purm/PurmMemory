@@ -38,6 +38,9 @@ namespace PurmMemory {
 			return this->WriteMemory(address, &buffer, sizeof(T));
 		}
 
+		bool InjectDLl(TCHAR* path);
+		bool InjectCode(BYTE* opCode);
+
 	private:
 		HANDLE _processHandle;
 		DWORD _processId;
