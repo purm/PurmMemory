@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <tchar.h>
+#include <direct.h>
 
 using namespace std;
 
@@ -12,27 +14,34 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	PurmMemory::MemoryManager* instance = new PurmMemory::MemoryManager();
 
-	cout << "MemoryManager created @ " << instance << endl;
+	wcout << "MemoryManager created @ " << instance << endl;
 	
 	//Open Process
-	cout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
+	wcout << "Process open " << ((instance->OpenProcess(_T("pidgin.exe")) == true) ? "succeded" : "failed") << endl;
 
 	//Writing Example 1
 	char* writeBuffer = "hallo!";
-	cout << "MemoryWrite " << ((instance->WriteMemory(0x0028F59E, writeBuffer, 6) == true) ? "succeded" : "failed") << endl;
+	wcout << "MemoryWrite " << ((instance->WriteMemory((void*)0x0028F59E, writeBuffer, 6) == true) ? "succeded" : "failed") << endl;
 
 	//Writing Example 2
-	cout << "MemoryWrite " << ((instance->WriteMemory<int>(0x01EA0490, 1337) == true) ? "succeded" : "failed") << endl;
+	wcout << "MemoryWrite " << ((instance->WriteMemory<int>((void*)0x01EA0490, 1337) == true) ? "succeded" : "failed") << endl;
 
 	//Reading Example 1
 	char* readBuffer = new char[8];
-	cout << "MemoryRead " << ((instance->ReadMemory(0x0028F59E, readBuffer, 6) == true) ? "succeded" : "failed") << endl;
+	wcout << "MemoryRead " << ((instance->ReadMemory((void*)0x0028F59E, readBuffer, 6) == true) ? "succeded" : "failed") << endl;
 	readBuffer[6] = '\0';
-	cout << "Buffer: " << readBuffer << endl;
+	wcout << "Buffer: " << readBuffer << endl;
 	delete[] readBuffer;
 
 	//Reading Example 2
-	cout << "MemoryRead resulted: " << instance->ReadMemory<int>(0x01EA0490) << endl;
+	wcout << "MemoryRead resulted: " << instance->ReadMemory<int>((void*)0x01EA0490) << endl;
+
+	//DLL injection example
+	TCHAR* pathBuff = new TCHAR[MAX_PATH];
+	_tgetcwd(pathBuff, MAX_PATH);
+	_tcscat(pathBuff, _T("\\PurmMemoryDemoInjectionDll.dll"));
+
+	wcout << "injection " << ((instance->InjectDll(pathBuff) == true) ? "succeded" : "failed") << endl;
 
 	cin.get();
 	delete instance;

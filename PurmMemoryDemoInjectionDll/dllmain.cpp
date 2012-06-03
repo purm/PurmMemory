@@ -11,9 +11,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		MessageBox(NULL, _T("hello world"), _T("from injected dll"), 0);
-		break;
 	case DLL_THREAD_ATTACH:
+		::MessageBox(NULL, _T("hello world"), _T("from injected dll"), 0);
+		break;
 	case DLL_THREAD_DETACH:
 	case DLL_PROCESS_DETACH:
 		break;

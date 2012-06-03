@@ -93,9 +93,9 @@ namespace PurmMemory {
 	}
 
 	//reads from memory
-	bool MemoryManager::ReadMemory(DWORD address, void* buffer, int size) {
+	bool MemoryManager::ReadMemory(void* address, void* buffer, int size) {
 		SIZE_T read;
-		if(!::ReadProcessMemory(this->_processHandle, (void*)address, buffer, size, &read)) {
+		if(!::ReadProcessMemory(this->_processHandle, address, buffer, size, &read)) {
 			#if(_DEBUG)
 				::OutputDebugString(_T("MemoryManager::ReadMemory(...): ReadProcessMemory returned false\r\n"));
 			#endif
@@ -114,9 +114,9 @@ namespace PurmMemory {
 		}
 	}
 
-	bool MemoryManager::WriteMemory(DWORD address, void* buffer, int size) {
+	bool MemoryManager::WriteMemory(void* address, void* buffer, int size) {
 		SIZE_T written;
-		if(!::WriteProcessMemory(this->_processHandle, (void*)address, buffer, size, &written)) {
+		if(!::WriteProcessMemory(this->_processHandle, address, buffer, size, &written)) {
 			#if(_DEBUG)
 				::OutputDebugString(_T("MemoryManager::WriteMemory(...): WriteProcessMemory returned false\r\n"));
 			#endif
@@ -177,7 +177,7 @@ namespace PurmMemory {
 	}
 
 	//injects a dll into the process
-	bool MemoryManager::InjectDLl(TCHAR* path) {
+	bool MemoryManager::InjectDll(TCHAR* path) {
 		size_t pathLenght = _tcsclen(path);
 		if(!pathLenght) {
 			#if(_DEBUG)
@@ -187,7 +187,30 @@ namespace PurmMemory {
 			return false;
 		}
 
-		DWORD address = (DWORD)::VirtualAllocEx(this->_processHandle, NULL, pathLenght, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		HMODULE module = ::GetModuleHandle(_T("kernel32.dll"));
+		if(!module) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Kernel32 Module could not be found"));
+			#endif
+
+			return false;
+		}
+
+		#ifdef _UNICODE
+			void* loadLibraryAddress = ::GetProcAddress(module, "LoadLibraryW");
+		#else
+			void* loadLibraryAddress = ::GetProcAddress(module, "LoadLibraryA");
+		#endif
+
+		if(!loadLibraryAddress) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): LoadLibrary Address could not be found"));
+			#endif
+
+			return false;
+		}
+
+		void* address = this->AllocateMemory(pathLenght);
 		if(!address) {
 			#if(_DEBUG)
 				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Remote Memory Allocating failed"));
@@ -201,10 +224,36 @@ namespace PurmMemory {
 				::OutputDebugString(_T("MemoryManager::InjectDLl(...): Memory Writing failed"));
 			#endif
 
+			this->FreeMemory(address, pathLenght);
+
 			return false;
 		}
 
-		::CreateRemoteThread(this->_processHandle, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibraryW, (void*)address, 0, NULL);
+		HANDLE threadHandle;
+		DWORD threadId;
+		threadHandle = this->CreateThread((LPTHREAD_START_ROUTINE)loadLibraryAddress, address, &threadId);
+
+		if(!threadHandle) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): CreateRemoteThread failed"));
+			#endif
+
+			this->FreeMemory(address, pathLenght);
+
+			return false;
+		}
+
+		if(::WaitForSingleObject(threadHandle, INFINITE) == WAIT_FAILED) {
+			#if(_DEBUG)
+				::OutputDebugString(_T("MemoryManager::InjectDLl(...): WaitForSingleObject(...) -> WAIT_FAILED"));
+			#endif
+
+			this->FreeMemory(address, pathLenght);
+
+			return false;
+		}
+
+		this->FreeMemory(address, pathLenght);
 
 		return true;
 	}
@@ -213,5 +262,23 @@ namespace PurmMemory {
 	bool MemoryManager::InjectCode(BYTE* opCode) {
 		//TODO: implement
 		return false;
+	}
+
+	//allocates some memory in the target process
+	LPVOID WINAPI MemoryManager::AllocateMemory(SIZE_T dwSize, LPVOID lpAddress, DWORD flAllocationType, DWORD flProtect)
+	{
+		return ::VirtualAllocEx(this->_processHandle, lpAddress, dwSize, flAllocationType, flProtect);
+	}
+
+	//frees some memory in the process
+	BOOL WINAPI MemoryManager::FreeMemory(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType)
+	{
+		return ::VirtualFreeEx(this->_processHandle, lpAddress, dwSize, dwFreeType);
+	}
+
+	//creates a thread inside the target process
+	HANDLE WINAPI MemoryManager::CreateThread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter, LPDWORD lpThreadId, SIZE_T dwStackSize, DWORD dwCreationFlags, LPSECURITY_ATTRIBUTES lpThreadAttributes)
+	{
+		return ::CreateRemoteThread(this->_processHandle, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId);
 	}
 }

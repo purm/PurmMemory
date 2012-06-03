@@ -22,8 +22,8 @@ namespace PurmMemory {
 		bool CloseProcess();
 		bool UseOpenedProcessHandle(HANDLE processHandle);
 
-		bool ReadMemory(DWORD address, void* buffer, int size);
-		template<class T> T ReadMemory(DWORD address) {
+		bool ReadMemory(void* address, void* buffer, int size);
+		template<class T> T ReadMemory(void* address) {
 			T buffer;
 			if(this->ReadMemory(address, &buffer, sizeof(T))) {
 				return buffer;
@@ -33,13 +33,17 @@ namespace PurmMemory {
 			}
 		}
 
-		bool WriteMemory(DWORD address, void* buffer, int size);
-		template<class T> bool WriteMemory(DWORD address, T buffer) {
+		bool WriteMemory(void* address, void* buffer, int size);
+		template<class T> bool WriteMemory(void* address, T buffer) {
 			return this->WriteMemory(address, &buffer, sizeof(T));
 		}
 
-		bool InjectDLl(TCHAR* path);
+		bool InjectDll(TCHAR* path);
 		bool InjectCode(BYTE* opCode);
+
+		LPVOID WINAPI AllocateMemory(SIZE_T dwSize, LPVOID lpAddress = NULL, DWORD flAllocationType = MEM_COMMIT, DWORD flProtect = PAGE_EXECUTE_READWRITE);
+		BOOL WINAPI FreeMemory(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType = MEM_RELEASE);
+		HANDLE WINAPI CreateThread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter, LPDWORD lpThreadId, DWORD dwCreationFlags = 0, SIZE_T dwStackSize = 0, LPSECURITY_ATTRIBUTES lpThreadAttributes = NULL);
 
 	private:
 		HANDLE _processHandle;
