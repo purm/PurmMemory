@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PurmMemory", "PurmMemory\Pu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PurmMemoryDemoApplication", "PurmMemoryDemoApplication\PurmMemoryDemoApplication.vcxproj", "{90D50BAF-65B3-D4F5-0F56-AAE1126B8412}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PurmMemoryDemoInjectionDll", "PurmMemoryDemoInjectionDll\PurmMemoryDemoInjectionDll.vcxproj", "{F94AF7BB-38E8-7040-FA9C-4D39DAF5AB47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{90D50BAF-65B3-D4F5-0F56-AAE1126B8412}.Debug|Win32.Build.0 = Debug|Win32
 		{90D50BAF-65B3-D4F5-0F56-AAE1126B8412}.Release|Win32.ActiveCfg = Release|Win32
 		{90D50BAF-65B3-D4F5-0F56-AAE1126B8412}.Release|Win32.Build.0 = Release|Win32
+		{F94AF7BB-38E8-7040-FA9C-4D39DAF5AB47}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F94AF7BB-38E8-7040-FA9C-4D39DAF5AB47}.Debug|Win32.Build.0 = Debug|Win32
+		{F94AF7BB-38E8-7040-FA9C-4D39DAF5AB47}.Release|Win32.ActiveCfg = Release|Win32
+		{F94AF7BB-38E8-7040-FA9C-4D39DAF5AB47}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
