@@ -23,6 +23,15 @@ namespace PurmMemory {
 		bool UseOpenedProcessHandle(HANDLE processHandle);
 
 		bool ReadMemory(DWORD address, void* buffer, int size);
+		template<class T> T ReadMemory(DWORD address) {
+			T buffer;
+			if(this->ReadMemory(address, &buffer, sizeof(T))) {
+				return buffer;
+			} else {
+				return NULL;
+			}
+		}
+
 	private:
 		HANDLE _processHandle;
 		DWORD _processId;

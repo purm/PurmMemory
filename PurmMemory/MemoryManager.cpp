@@ -82,6 +82,8 @@ namespace PurmMemory {
 			#if(_DEBUG)
 				::OutputDebugString(_T("MemoryManager::CloseProcess(...): invalid HANDLE\r\n"));
 			#endif
+
+			return false;
 		}
 	}
 
